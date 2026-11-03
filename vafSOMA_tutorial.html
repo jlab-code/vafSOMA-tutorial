@@ -171,25 +171,39 @@ takes about <strong>45 minutes</strong>:</p>
 <p>Every command was tested with vafSOMA 0.4.3 on Linux. Copy the
 commands into a terminal in the order shown.</p>
 <blockquote>
-<p><strong>What you need:</strong> Linux or macOS, Python 3.10 or newer,
-and <code>git</code>. On Windows, use WSL.</p>
+<p><strong>What you need:</strong> Linux or macOS, <code>git</code>, and
+conda (or Python 3.13). On Windows, use WSL.</p>
 </blockquote>
 <hr />
 <h1 id="part-1.-install-and-first-run">Part 1. Install and first
 run</h1>
 <p>Goal: install vafSOMA and run it on a small simulated tree.</p>
 <h2 id="get-the-code">1.1 Get the code</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/jlab-code/vafSOMA.git</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--branch</span> v0.4.3 https://github.com/jlab-code/vafSOMA.git</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/jlab-code/vafSOMA-tutorial.git</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> vafSOMA</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> venv .venv <span class="kw">&amp;&amp;</span> <span class="bu">source</span> .venv/bin/activate      <span class="co"># optional: a private Python environment</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install .</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> version</span></code></pre></div>
-<p>Expected output (version numbers of the libraries will differ):</p>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-y</span> <span class="at">-n</span> vafsoma043 python=3.13</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate vafsoma043</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.lock.txt      <span class="co"># exact library versions vafSOMA was tested with</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install .</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> version</span></code></pre></div>
+<p>This installs vafSOMA 0.4.3 with the library versions it was tested
+with, so the same commands give the same results on every computer. Use
+this installation for analyses you will publish, and report the output
+of <code>vafsoma version</code> with your results. The environment name
+contains the version (0.4.3), so later versions can be installed next to
+it. Activate it in every new terminal before using vafSOMA:
+<code>conda activate vafsoma043</code>. Without conda, use a Python 3.13
+virtual environment:
+<code>python3.13 -m venv .venv &amp;&amp; source .venv/bin/activate</code>,
+then the two <code>pip install</code> lines.</p>
+<p>Expected output (the Python patch version may differ):</p>
 <pre class="text"><code>{
   &quot;vafsoma&quot;: &quot;0.4.3&quot;,
-  &quot;python&quot;: &quot;3.11.9&quot;,
-  ...
+  &quot;python&quot;: &quot;3.13.18&quot;,
+  &quot;numpy&quot;: &quot;2.5.3&quot;,
+  &quot;pandas&quot;: &quot;3.0.5&quot;,
+  &quot;scipy&quot;: &quot;1.18.1&quot;
 }</code></pre>
 <p>The tutorial scripts used in Parts 2 and 3 are in
 <code>../vafSOMA-tutorial/scripts/</code>. They need only pandas and
@@ -242,8 +256,9 @@ compare with the truth later.)</p>
 <p>A run is described by a JSON configuration. Look at
 <code>vafSOMA_configs/example_01_per_leaf.json</code>: it names the
 input files and the leaf composition. Check it, then run it:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> check vafSOMA_configs/example_01_per_leaf.json</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> run vafSOMA_configs/example_01_per_leaf.json</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate vafsoma043                  <span class="co"># once per terminal, before any vafsoma command</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> check vafSOMA_configs/example_01_per_leaf.json</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> run vafSOMA_configs/example_01_per_leaf.json</span></code></pre></div>
 <p><code>check</code> prints what will be run:</p>
 <pre class="text"><code>configuration OK: vafSOMA_configs/example_01_per_leaf.json
   experiment: example_01_per_leaf
@@ -520,7 +535,8 @@ with the counts:</p>
 <pre class="text"><code>sample    root2tip_length
 B1_leaf1  10.2</code></pre>
 <h2 id="the-run-configuration">4.2 The run configuration</h2>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> template run <span class="op">&gt;</span> my_analysis.json</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate vafsoma043                  <span class="co"># once per terminal</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vafsoma</span> template run <span class="op">&gt;</span> my_analysis.json</span></code></pre></div>
 <p>Point <code>input.variants</code>,
 <code>input.effective_genome_size</code> and <code>input.root2tip</code>
 at your tables, then set:</p>
@@ -636,18 +652,23 @@ root-to-tip length of each organ (<code>vafSOMA_docs/outputs.md</code>).
 </thead>
 <tbody>
 <tr class="odd">
+<td><code>conda activate vafsoma043</code></td>
+<td>activate the environment (once per terminal, before any vafsoma
+command)</td>
+</tr>
+<tr class="even">
 <td><code>vafsoma run CONFIG</code></td>
 <td>fit, call and count fixed mutations</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>vafsoma check CONFIG</code></td>
 <td>validate a configuration and its input files</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>vafsoma template run</code></td>
 <td>print a complete run configuration</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>vafsoma version</code></td>
 <td>versions</td>
 </tr>
@@ -717,8 +738,8 @@ length</td>
 <tbody>
 <tr class="odd">
 <td><code>vafsoma: command not found</code></td>
-<td>Activate the environment in which you ran
-<code>pip install .</code></td>
+<td>Activate the environment: <code>conda activate vafsoma043</code> (or
+the environment in which you ran <code>pip install .</code>)</td>
 </tr>
 <tr class="even">
 <td><code>vafsoma: error: unknown configuration key: ...</code></td>

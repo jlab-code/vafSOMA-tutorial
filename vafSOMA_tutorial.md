@@ -14,7 +14,7 @@ leaves or fruits, and it starts from tables of candidate variants with read coun
 
 Every command was tested with vafSOMA 0.4.3 on Linux. Copy the commands into a terminal in the order shown.
 
-> **What you need:** Linux or macOS, Python 3.10 or newer, and `git`. On Windows, use WSL.
+> **What you need:** Linux or macOS, `git`, and conda (or Python 3.13). On Windows, use WSL.
 
 ---
 
@@ -25,21 +25,32 @@ Goal: install vafSOMA and run it on a small simulated tree.
 ## 1.1 Get the code
 
 ```bash
-git clone https://github.com/jlab-code/vafSOMA.git
+git clone --branch v0.4.3 https://github.com/jlab-code/vafSOMA.git
 git clone https://github.com/jlab-code/vafSOMA-tutorial.git
 cd vafSOMA
-python3 -m venv .venv && source .venv/bin/activate      # optional: a private Python environment
+conda create -y -n vafsoma043 python=3.13
+conda activate vafsoma043
+pip install -r requirements.lock.txt      # exact library versions vafSOMA was tested with
 pip install .
 vafsoma version
 ```
 
-Expected output (version numbers of the libraries will differ):
+This installs vafSOMA 0.4.3 with the library versions it was tested with, so the same commands give the same results
+on every computer. Use this installation for analyses you will publish, and report the output of `vafsoma version`
+with your results. The environment name contains the version (0.4.3), so later versions can be installed next to it.
+Activate it in every new terminal before using vafSOMA: `conda activate vafsoma043`. Without conda, use
+a Python 3.13 virtual environment: `python3.13 -m venv .venv && source .venv/bin/activate`, then the two `pip install`
+lines.
+
+Expected output (the Python patch version may differ):
 
 ```text
 {
   "vafsoma": "0.4.3",
-  "python": "3.11.9",
-  ...
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5",
+  "scipy": "1.18.1"
 }
 ```
 
@@ -73,6 +84,7 @@ A run is described by a JSON configuration. Look at `vafSOMA_configs/example_01_
 files and the leaf composition. Check it, then run it:
 
 ```bash
+conda activate vafsoma043                  # once per terminal, before any vafsoma command
 vafsoma check vafSOMA_configs/example_01_per_leaf.json
 vafsoma run vafSOMA_configs/example_01_per_leaf.json
 ```
@@ -355,6 +367,7 @@ B1_leaf1  10.2
 ## 4.2 The run configuration
 
 ```bash
+conda activate vafsoma043                  # once per terminal
 vafsoma template run > my_analysis.json
 ```
 
@@ -404,6 +417,7 @@ composition is off by ±10% and ±20%.
 
 | Command | What it does |
 |---|---|
+| `conda activate vafsoma043` | activate the environment (once per terminal, before any vafsoma command) |
 | `vafsoma run CONFIG` | fit, call and count fixed mutations |
 | `vafsoma check CONFIG` | validate a configuration and its input files |
 | `vafsoma template run` | print a complete run configuration |
@@ -427,7 +441,7 @@ Inputs: `vafSOMA_docs/inputs.md`. All output files: `vafSOMA_docs/outputs.md`. A
 
 | Problem | Solution |
 |---|---|
-| `vafsoma: command not found` | Activate the environment in which you ran `pip install .` |
+| `vafsoma: command not found` | Activate the environment: `conda activate vafsoma043` (or the environment in which you ran `pip install .`) |
 | `vafsoma: error: unknown configuration key: ...` | Keys are checked strictly; compare with `vafsoma template run` |
 | All layers but one are `unresolvable` | Expected when a layer's VAF (half its share of the organ) is close to the background. More depth, a different organ, or layer-enriched samples help |
 | `fit_warning = True` | The VAF spectrum departs from the fitted mixture, often because the background is not exponential. Common at low depth; check the spectrum (2.2), and report only layers flagged `reportable` |
